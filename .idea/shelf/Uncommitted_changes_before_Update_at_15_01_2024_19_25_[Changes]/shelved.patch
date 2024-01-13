@@ -1,0 +1,167 @@
+Index: src/main/java/jm/task/core/jdbc/util/Util.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package jm.task.core.jdbc.util;\r\n\r\nimport jm.task.core.jdbc.model.User;\r\nimport org.hibernate.SessionFactory;\r\nimport org.hibernate.boot.registry.StandardServiceRegistryBuilder;\r\nimport org.hibernate.cfg.Configuration;\r\nimport org.hibernate.cfg.Environment;\r\n\r\nimport org.hibernate.service.ServiceRegistry;\r\nimport java.sql.Connection;\r\nimport java.sql.DriverManager;\r\nimport java.sql.SQLException;\r\nimport java.util.Properties;\r\n\r\npublic class Util {\r\n    private static final String PASSWORD = \"Qazpwsl123\";\r\n    private static final String USERNAME = \"root\";\r\n    private static final String URL = \"jdbc:mysql://localhost:3306/new\";\r\n\r\n    static SessionFactory sessionFactory = null;\r\n\r\n    private Util() {}\r\n\r\n    public static Connection open() {\r\n        try {\r\n            return DriverManager.getConnection(\r\n                URL, USERNAME, PASSWORD\r\n            );\r\n        } catch (SQLException e) {\r\n            throw new RuntimeException(e);\r\n        }\r\n    }\r\n\r\n    public static SessionFactory getSessionFactory() {\r\n        if (sessionFactory == null) {\r\n            try {\r\n                Configuration configuration = new Configuration();\r\n\r\n                Properties settings = new Properties();\r\n                settings.put(Environment.DRIVER, \"com.mysql.cj.jdbc.Driver\");\r\n                settings.put(Environment.DIALECT, \"org.hibernate.dialect.MySQL8Dialect\");\r\n                settings.put(Environment.URL, \"jdbc:mysql://localhost:3306/new\");\r\n                settings.put(Environment.USER, \"root\");\r\n                settings.put(Environment.PASS, \"Qazpwsl123\");\r\n\r\n                settings.put(Environment.SHOW_SQL, \"true\");\r\n\r\n                settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, \"thread\");\r\n\r\n                settings.put(Environment.HBM2DDL_AUTO, \"create\");\r\n\r\n                configuration.setProperties(settings);\r\n\r\n                configuration.addAnnotatedClass(User.class);\r\n\r\n                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()\r\n                        .applySettings(configuration.getProperties()).build();\r\n\r\n                sessionFactory = configuration.buildSessionFactory(serviceRegistry);\r\n            } catch (Exception e) {\r\n                e.printStackTrace();\r\n            }\r\n        }\r\n        return sessionFactory;\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/jm/task/core/jdbc/util/Util.java b/src/main/java/jm/task/core/jdbc/util/Util.java
+--- a/src/main/java/jm/task/core/jdbc/util/Util.java	(revision 4cdb8cddfe6680f9011b526eb167e85c2a7c9b8e)
++++ b/src/main/java/jm/task/core/jdbc/util/Util.java	(date 1705335399748)
+@@ -47,8 +47,6 @@
+ 
+                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
+ 
+-                settings.put(Environment.HBM2DDL_AUTO, "create");
+-
+                 configuration.setProperties(settings);
+ 
+                 configuration.addAnnotatedClass(User.class);
+Index: src/main/java/jm/task/core/jdbc/service/UserServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package jm.task.core.jdbc.service;\r\n\r\nimport jm.task.core.jdbc.dao.UserDao;\r\nimport jm.task.core.jdbc.dao.UserDaoHibernateImpl;\r\nimport jm.task.core.jdbc.dao.UserDaoJDBCImpl;\r\nimport jm.task.core.jdbc.model.User;\r\nimport jm.task.core.jdbc.util.Util;\r\n\r\nimport java.sql.Connection;\r\nimport java.sql.SQLException;\r\nimport java.sql.Statement;\r\nimport java.util.List;\r\n\r\npublic class UserServiceImpl implements UserService {\r\n    UserDao userDao = new UserDaoHibernateImpl();\r\n\r\n    public void createUsersTable() {\r\n        userDao.createUsersTable();\r\n    }\r\n\r\n    public void dropUsersTable() {\r\n        userDao.dropUsersTable();\r\n    }\r\n\r\n    public void saveUser(String name, String lastName, byte age) {\r\n        userDao.saveUser(name, lastName, age);\r\n    }\r\n\r\n    public void removeUserById(long id) {\r\n        userDao.removeUserById(id);\r\n    }\r\n\r\n    public List<User> getAllUsers() {\r\n        List<User> list = userDao.getAllUsers();\r\n        return list;\r\n    }\r\n\r\n    public void cleanUsersTable() {\r\n        userDao.cleanUsersTable();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/jm/task/core/jdbc/service/UserServiceImpl.java b/src/main/java/jm/task/core/jdbc/service/UserServiceImpl.java
+--- a/src/main/java/jm/task/core/jdbc/service/UserServiceImpl.java	(revision 4cdb8cddfe6680f9011b526eb167e85c2a7c9b8e)
++++ b/src/main/java/jm/task/core/jdbc/service/UserServiceImpl.java	(date 1705335440518)
+@@ -2,17 +2,13 @@
+ 
+ import jm.task.core.jdbc.dao.UserDao;
+ import jm.task.core.jdbc.dao.UserDaoHibernateImpl;
+-import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
+ import jm.task.core.jdbc.model.User;
+-import jm.task.core.jdbc.util.Util;
+ 
+-import java.sql.Connection;
+-import java.sql.SQLException;
+-import java.sql.Statement;
++
+ import java.util.List;
+ 
+ public class UserServiceImpl implements UserService {
+-    UserDao userDao = new UserDaoHibernateImpl();
++    private final UserDao userDao = new UserDaoHibernateImpl();
+ 
+     public void createUsersTable() {
+         userDao.createUsersTable();
+Index: src/main/java/jm/task/core/jdbc/model/User.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package jm.task.core.jdbc.model;\r\n\r\nimport javax.persistence.*;\r\n\r\n@Entity\r\n@Table(name=\"users\")\r\npublic class User {\r\n    @Id\r\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\r\n    @Column(name=\"id\")\r\n    private Long id;\r\n\r\n    @Column(name=\"name\")\r\n    private String name;\r\n\r\n    @Column(name=\"lastName\")\r\n    private String lastName;\r\n\r\n    @Column(name=\"age\")\r\n    private Byte age;\r\n\r\n    public User() {\r\n\r\n    }\r\n\r\n    public User(String name, String lastName, Byte age) {\r\n        this.name = name;\r\n        this.lastName = lastName;\r\n        this.age = age;\r\n    }\r\n\r\n    public Long getId() {\r\n        return id;\r\n    }\r\n\r\n    public void setId(Long id) {\r\n        this.id = id;\r\n    }\r\n\r\n    public String getName() {\r\n        return name;\r\n    }\r\n\r\n    public void setName(String name) {\r\n        this.name = name;\r\n    }\r\n\r\n    public String getLastName() {\r\n        return lastName;\r\n    }\r\n\r\n    public void setLastName(String lastName) {\r\n        this.lastName = lastName;\r\n    }\r\n\r\n    public Byte getAge() {\r\n        return age;\r\n    }\r\n\r\n    public void setAge(Byte age) {\r\n        this.age = age;\r\n    }\r\n\r\n    @Override\r\n    public String toString() {\r\n        return \"User{\" +\r\n               \"id=\" + id +\r\n               \", name='\" + name + '\\'' +\r\n               \", lastName='\" + lastName + '\\'' +\r\n               \", age=\" + age +\r\n               '}';\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/jm/task/core/jdbc/model/User.java b/src/main/java/jm/task/core/jdbc/model/User.java
+--- a/src/main/java/jm/task/core/jdbc/model/User.java	(revision 4cdb8cddfe6680f9011b526eb167e85c2a7c9b8e)
++++ b/src/main/java/jm/task/core/jdbc/model/User.java	(date 1705335473381)
+@@ -1,6 +1,12 @@
+ package jm.task.core.jdbc.model;
+ 
+-import javax.persistence.*;
++
++import javax.persistence.Column;
++import javax.persistence.Entity;
++import javax.persistence.GeneratedValue;
++import javax.persistence.GenerationType;
++import javax.persistence.Id;
++import javax.persistence.Table;
+ 
+ @Entity
+ @Table(name="users")
+Index: src/main/java/jm/task/core/jdbc/dao/UserDaoHibernateImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package jm.task.core.jdbc.dao;\r\n\r\nimport jm.task.core.jdbc.model.User;\r\nimport org.hibernate.Session;\r\nimport jm.task.core.jdbc.util.Util;\r\nimport org.hibernate.Transaction;\r\n\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class UserDaoHibernateImpl implements UserDao {\r\n\r\n\r\n\r\n    public UserDaoHibernateImpl() {\r\n\r\n    }\r\n\r\n\r\n    @Override\r\n    public void createUsersTable() {\r\n        Session session = Util.getSessionFactory().getCurrentSession();\r\n        final String sqlCreateTable = \"\"\"\r\n            CREATE TABLE IF NOT EXISTS users(\r\n            id BIGINT AUTO_INCREMENT PRIMARY KEY,\r\n            name VARCHAR(100) NOT NULL,\r\n            lastName VARCHAR(100) NOT NULL,\r\n            age TINYINT NOT NULL\r\n            )\r\n            \"\"\";\r\n        session.beginTransaction();\r\n        session.createSQLQuery(sqlCreateTable).executeUpdate();\r\n        session.getTransaction().commit();\r\n\r\n    }\r\n\r\n    @Override\r\n    public void dropUsersTable() {\r\n        Session session = Util.getSessionFactory().getCurrentSession();\r\n        final String sqlDropUserTable = \"\"\"\r\n                DROP TABLE IF EXISTS new.users \r\n                \"\"\";\r\n        session.beginTransaction();\r\n        session.createSQLQuery(sqlDropUserTable).executeUpdate();\r\n        session.getTransaction().commit();\r\n    }\r\n\r\n    @Override\r\n    public void saveUser(String name, String lastName, byte age) {\r\n        Session session = Util.getSessionFactory().getCurrentSession();\r\n        Transaction transaction = session.beginTransaction();\r\n        User user = new User(name, lastName, age);\r\n        session.save(user);\r\n        transaction.commit();\r\n\r\n    }\r\n\r\n    @Override\r\n    public void removeUserById(long id) {\r\n        Session session = Util.getSessionFactory().getCurrentSession();\r\n        session.beginTransaction();\r\n        User user = session.get(User.class, id);\r\n        session.delete(user);\r\n        session.getTransaction().commit();\r\n    }\r\n\r\n    @Override\r\n    public List<User> getAllUsers() {\r\n        Session session = Util.getSessionFactory().getCurrentSession();\r\n        session.beginTransaction();\r\n        List<User> users = session.createQuery(\"from User\").getResultList();\r\n        session.getTransaction().commit();\r\n        return users;\r\n\r\n    }\r\n\r\n    @Override\r\n    public void cleanUsersTable() {\r\n        Session session =   Util.getSessionFactory().getCurrentSession();\r\n        session.beginTransaction();\r\n        session.createSQLQuery(\"TRUNCATE TABLE users\").executeUpdate();\r\n        session.getTransaction().commit();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/jm/task/core/jdbc/dao/UserDaoHibernateImpl.java b/src/main/java/jm/task/core/jdbc/dao/UserDaoHibernateImpl.java
+--- a/src/main/java/jm/task/core/jdbc/dao/UserDaoHibernateImpl.java	(revision 4cdb8cddfe6680f9011b526eb167e85c2a7c9b8e)
++++ b/src/main/java/jm/task/core/jdbc/dao/UserDaoHibernateImpl.java	(date 1705335630995)
+@@ -1,12 +1,7 @@
+ package jm.task.core.jdbc.dao;
+ 
+ import jm.task.core.jdbc.model.User;
+-import org.hibernate.Session;
+-import jm.task.core.jdbc.util.Util;
+-import org.hibernate.Transaction;
+ 
+-
+-import java.util.ArrayList;
+ import java.util.List;
+ 
+ public class UserDaoHibernateImpl implements UserDao {
+@@ -20,66 +15,31 @@
+ 
+     @Override
+     public void createUsersTable() {
+-        Session session = Util.getSessionFactory().getCurrentSession();
+-        final String sqlCreateTable = """
+-            CREATE TABLE IF NOT EXISTS users(
+-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+-            name VARCHAR(100) NOT NULL,
+-            lastName VARCHAR(100) NOT NULL,
+-            age TINYINT NOT NULL
+-            )
+-            """;
+-        session.beginTransaction();
+-        session.createSQLQuery(sqlCreateTable).executeUpdate();
+-        session.getTransaction().commit();
+ 
+     }
+ 
+     @Override
+     public void dropUsersTable() {
+-        Session session = Util.getSessionFactory().getCurrentSession();
+-        final String sqlDropUserTable = """
+-                DROP TABLE IF EXISTS new.users 
+-                """;
+-        session.beginTransaction();
+-        session.createSQLQuery(sqlDropUserTable).executeUpdate();
+-        session.getTransaction().commit();
++
+     }
+ 
+     @Override
+     public void saveUser(String name, String lastName, byte age) {
+-        Session session = Util.getSessionFactory().getCurrentSession();
+-        Transaction transaction = session.beginTransaction();
+-        User user = new User(name, lastName, age);
+-        session.save(user);
+-        transaction.commit();
+ 
+     }
+ 
+     @Override
+     public void removeUserById(long id) {
+-        Session session = Util.getSessionFactory().getCurrentSession();
+-        session.beginTransaction();
+-        User user = session.get(User.class, id);
+-        session.delete(user);
+-        session.getTransaction().commit();
++
+     }
+ 
+     @Override
+     public List<User> getAllUsers() {
+-        Session session = Util.getSessionFactory().getCurrentSession();
+-        session.beginTransaction();
+-        List<User> users = session.createQuery("from User").getResultList();
+-        session.getTransaction().commit();
+-        return users;
+-
++        return null;
+     }
+ 
+     @Override
+     public void cleanUsersTable() {
+-        Session session =   Util.getSessionFactory().getCurrentSession();
+-        session.beginTransaction();
+-        session.createSQLQuery("TRUNCATE TABLE users").executeUpdate();
+-        session.getTransaction().commit();
++
+     }
+ }
